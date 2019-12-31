@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="DiagramCore.DemoApp.UserControl3"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:view="clr-namespace:DiagramCore;assembly=DiagramCore"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"></BooleanToVisibilityConverter>
+    </UserControl.Resources>
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <view:HorizontalToggleSwitch      xmlns:view="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" x:Name="ToggleSwitch1" IsChecked="True" CheckedContent="Visible"></view:HorizontalToggleSwitch>
+        </ToolBar>
+        <view:Graticule
+
+            Visibility="{Binding ElementName=ToggleSwitch1, Converter={StaticResource BoolToVisibilityConverter},Path=IsChecked}"
+            >
+            
+        </view:Graticule>
+    </DockPanel>
+    
+
+</UserControl>

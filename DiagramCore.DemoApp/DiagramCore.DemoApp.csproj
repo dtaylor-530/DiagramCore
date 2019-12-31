@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoftFluent.Windows" Version="1.0.1.6" />
+    <PackageReference Include="ToggleSwitch" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConnectionCore\ConnectionCore.csproj" />
+    <ProjectReference Include="..\DiagramCore\DiagramCore.csproj" />
+    <ProjectReference Include="..\NodeCore\NodeCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UserControl2.xaml.cs">
+      <DependentUpon>UserControl2.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UserControl2.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>
