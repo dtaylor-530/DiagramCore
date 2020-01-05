@@ -13,6 +13,9 @@
         <TabItem Header="Graticule">
             <local:UserControl3></local:UserControl3>
         </TabItem>
+        <TabItem Header="Circle">
+            <local:UserControl1></local:UserControl1>
+        </TabItem>
     </TabControl>
 
 

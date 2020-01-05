@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
@@ -12,7 +13,7 @@ using System.Windows.Input;
 
 namespace NodeCore
 {
-    public class PointViewModel : INode, IEquatable<PointViewModel>
+    public class NodeViewModel : INode, IEquatable<NodeViewModel>
     {
         private int x;
         private int y;
@@ -20,14 +21,14 @@ namespace NodeCore
 
         public int X
         {
-            get => x; 
+            get => x;
             set
             {
                 if (x != value)
                 {
                     OldX = x;
                     this.x = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(X)));
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -41,7 +42,7 @@ namespace NodeCore
                 {
                     OldY = y;
                     this.y = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Y)));
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -51,7 +52,7 @@ namespace NodeCore
 
         [Browsable(false)]
         public int OldY { get; private set; }
-     
+
 
         public bool IsSelected
         {
@@ -61,7 +62,7 @@ namespace NodeCore
                 if (isSelected != value)
                 {
                     this.isSelected = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -69,13 +70,26 @@ namespace NodeCore
         public int Size { get; }
 
 
-        public object Object { get; set; }
+        public object Object { get; set; } = "Node";
 
-        public PointViewModel()
+        public NodeViewModel() : this(100)
+        {
+
+        }
+
+
+        public NodeViewModel(int size)
         {
             Command = new SelectCommand(this);
             DragCommand = new DragCommand(this);
-            Size = 100;
+            Size = size;
+        }
+
+        public NodeViewModel(int x, int y, int size = 50):this(size)
+        {
+            this.x = x;
+            this.y = y;
+         
         }
 
         [Browsable(false)]
@@ -89,11 +103,17 @@ namespace NodeCore
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-        #region equality
-        
-        public bool Equals([AllowNull] PointViewModel other)
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            return other !=null && this.X == other.X && this.Y == other.Y && this.Size == other.Size;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        #region equality
+
+        public bool Equals([AllowNull] NodeViewModel other)
+        {
+            return other != null && this.X == other.X && this.Y == other.Y && this.Size == other.Size;
         }
 
         public override int GetHashCode()
@@ -109,15 +129,15 @@ namespace NodeCore
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as PointViewModel);
+            return this.Equals(obj as NodeViewModel);
         }
 
-        public static bool operator ==(PointViewModel left, PointViewModel right)
+        public static bool operator ==(NodeViewModel left, NodeViewModel right)
         {
-            return EqualityComparer<PointViewModel>.Default.Equals(left, right);
+            return EqualityComparer<NodeViewModel>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(PointViewModel left, PointViewModel right)
+        public static bool operator !=(NodeViewModel left, NodeViewModel right)
         {
             return !(left == right);
         }
@@ -135,7 +155,7 @@ namespace NodeCore
 
     public class SelectCommand : ICommand
     {
-        private PointViewModel pvm;
+        private NodeViewModel pvm;
 
         public event EventHandler CanExecuteChanged;
 
@@ -143,7 +163,7 @@ namespace NodeCore
         {
             return true;
         }
-        public SelectCommand(PointViewModel pvm)
+        public SelectCommand(NodeViewModel pvm)
         {
             this.pvm = pvm;
         }
@@ -156,7 +176,7 @@ namespace NodeCore
 
     public class DragCommand : ICommand
     {
-        private PointViewModel pvm;
+        private NodeViewModel pvm;
 
         public event EventHandler CanExecuteChanged;
 
@@ -164,15 +184,15 @@ namespace NodeCore
         {
             return true;
         }
-        public DragCommand(PointViewModel pvm)
+        public DragCommand(NodeViewModel pvm)
         {
             this.pvm = pvm;
         }
         public void Execute(object parameter)
         {
 
-            (pvm as PointViewModel).X += (int)(parameter as DragDeltaEventArgs).HorizontalChange;
-            (pvm as PointViewModel).Y += (int)(parameter as DragDeltaEventArgs).VerticalChange;
+            (pvm as NodeViewModel).X += (int)(parameter as DragDeltaEventArgs).HorizontalChange;
+            (pvm as NodeViewModel).Y += (int)(parameter as DragDeltaEventArgs).VerticalChange;
             (parameter as DragDeltaEventArgs).Handled = true;
         }
     }

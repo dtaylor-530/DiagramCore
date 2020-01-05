@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Denxorz.ZoomControl" Version="1.1.0" />
     <PackageReference Include="SoftFluent.Windows" Version="1.0.1.6" />
     <PackageReference Include="ToggleSwitch" Version="1.1.2" />
+    <PackageReference Include="Wpf.Controls.PanAndZoom" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>

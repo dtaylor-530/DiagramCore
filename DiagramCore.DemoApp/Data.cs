@@ -16,34 +16,36 @@ namespace DiagramCore.DemoApp
 
     public class DesignData
     {
+        NodeViewModel[] points;
+
+        Lazy<ConnectionViewModel[]> _connections;
+
         public DesignData()
         {
             Move = new MoveCommand(this);
-        }
 
-        PointViewModel[] points = 
-            new[]{
-            new PointViewModel { X = 50, Y = 50 },
-                        new PointViewModel { X = 500, Y = 50 },
-                        new PointViewModel { X = 240, Y = 250 }
+            points = new[]{
+            new NodeViewModel { X = 50, Y = 50, Object=1 },
+                        new NodeViewModel { X = 500, Y = 50, Object=2},
+                        new NodeViewModel { X = 240, Y = 250, Object=3 }
             };
 
-        public ObservableCollection<PointViewModel> Points
-        {
-            get => new ObservableCollection<PointViewModel>( points);
-        }
-        public ObservableCollection<ConnectionViewModel> Connections
-        {
-            get
-            {
-                var _connections = new Lazy<ObservableCollection<ConnectionViewModel>>(() => new ObservableCollection<ConnectionViewModel>(
-                    new[]{
+         _connections = new Lazy<ConnectionViewModel[]>(() => 
+                      new[]{
                     new ConnectionViewModel(points[0],points[2]),
                     new ConnectionViewModel(points[1],points[2])
-                })); 
-                return _connections.Value;
-            }
+                  });
         }
+
+
+
+
+        public NodeViewModel[] Points
+        {
+            get => points;
+        }
+
+        public ConnectionViewModel[] Connections => _connections.Value;
 
 
         public MoveCommand Move { get; } 
