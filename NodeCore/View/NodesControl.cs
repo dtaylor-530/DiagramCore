@@ -68,39 +68,13 @@ namespace NodeCore
             var nodesControl = (NodesControl)sender;
             var viewModel = ((NodeViewModel)e);
 
-            if (propertyName == nameof(NodeViewModel.IsSelected))
+            if (propertyName == nameof(NodeViewModel.IsSelected) && viewModel.IsSelected)
             {
-                foreach (var x in nodesControl.Items)
-                {
-                    if (viewModel != ((NodeViewModel)x))
-                        (x as NodeViewModel).IsSelected = false;
-                }
-
-                nodesControl.Dispatcher.InvokeAsync(() => nodesControl.SelectedObject = viewModel, System.Windows.Threading.DispatcherPriority.Background, default(System.Threading.CancellationToken));
+                PositionChanged(nodesControl,viewModel);
             }
             if (nodesControl.IsDraggable == false && (propertyName == nameof(NodeViewModel.X) || propertyName == nameof(NodeViewModel.Y)))
             {
-                DoubleAnimation speedDoubleAni = null;
-                var item = nodesControl.ItemContainerGenerator.ContainerFromItem(e);
-
-                if (propertyName == nameof(NodeViewModel.X))
-                {
-                    speedDoubleAni =
-                            new DoubleAnimation(viewModel.OldX, (double)(viewModel.X), new Duration(new TimeSpan(0, 0, 1)));
-                    Storyboard.SetTargetProperty(speedDoubleAni, new PropertyPath(Canvas.LeftProperty));
-                }
-                if (propertyName == nameof(NodeViewModel.Y))
-                {
-                    speedDoubleAni =
-                            new DoubleAnimation(viewModel.OldY, (double)(viewModel.Y), new Duration(new TimeSpan(0, 0, 1)));
-
-                    Storyboard.SetTargetProperty(speedDoubleAni, new PropertyPath(Canvas.TopProperty));
-                }
-
-                Storyboard.SetTarget(speedDoubleAni, item);
-                Storyboard story = new Storyboard();
-                story.Children.Add(speedDoubleAni);
-                story.Begin();
+                PositionChanged(nodesControl, viewModel,propertyName, e);
             }
         }
 
@@ -109,5 +83,46 @@ namespace NodeCore
             return baseValue;
         }
 
+
+        private static void PositionChanged(NodesControl nodesControl, NodeViewModel viewModel)
+        {
+            foreach (var item in nodesControl.Items)
+            {
+                if (viewModel != ((NodeViewModel)item))
+                {
+                    (item as NodeViewModel).IsSelected = false;
+                }
+            }
+
+            nodesControl.Dispatcher.InvokeAsync(() => nodesControl.SelectedObject = viewModel, 
+                System.Windows.Threading.DispatcherPriority.Background, default(System.Threading.CancellationToken));
+        }
+
+        private static void PositionChanged(NodesControl nodesControl, NodeViewModel viewModel, string propertyName, object e)
+        {
+            DoubleAnimation speedDoubleAni = null;
+            DependencyObject dObject = nodesControl.ItemContainerGenerator.ContainerFromItem(e);
+
+            if (propertyName == nameof(NodeViewModel.X))
+            {
+                speedDoubleAni =
+                        new DoubleAnimation(viewModel.OldX, (double)(viewModel.X), new Duration(new TimeSpan(0, 0, 1)));
+                Storyboard.SetTargetProperty(speedDoubleAni, new PropertyPath(Canvas.LeftProperty));
+            }
+            if (propertyName == nameof(NodeViewModel.Y))
+            {
+                speedDoubleAni =
+                        new DoubleAnimation(viewModel.OldY, (double)(viewModel.Y), new Duration(new TimeSpan(0, 0, 1)));
+
+                Storyboard.SetTargetProperty(speedDoubleAni, new PropertyPath(Canvas.TopProperty));
+            }
+
+            Storyboard.SetTarget(speedDoubleAni, dObject);
+            Storyboard story = new Storyboard();
+            story.Children.Add(speedDoubleAni);
+            story.Begin();
+        }
+
+     
     }
 }

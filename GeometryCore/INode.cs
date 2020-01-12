@@ -12,5 +12,11 @@ namespace GeometryCore
         int Y { get; }
 
         int Size { get; }
+
+        object Key { get; }
+
+        //event Action<IMessage> MessageChanged;
+
+        void NextChange(IMessage message);
     }
 }

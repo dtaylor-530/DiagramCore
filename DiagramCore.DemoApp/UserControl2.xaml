@@ -9,6 +9,7 @@
              xmlns:pwpf="clr-namespace:NodeCore;assembly=NodeCore"
              xmlns:paz="clr-namespace:Wpf.Controls.PanAndZoom;assembly=Wpf.Controls.PanAndZoom"
              xmlns:denxorz="clr-namespace:Denxorz.ZoomControl;assembly=Denxorz.ZoomControl"
+             xmlns:numeric="http://gu.se/NumericInput"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -24,32 +25,72 @@
             <windows:PropertyGrid  Margin="10" xmlns:windows="clr-namespace:SoftFluent.Windows;assembly=SoftFluent.Windows" 
                             SelectedObject="{Binding ElementName=NodesControl ,Path=SelectedObject}" Width="225" />
 
+            <ListView ItemsSource="{Binding ElementName=NodesControl ,Path=SelectedObject.Messages}" Width="225" Height="500" >
+
+                <ListView.View>
+
+                    <GridView AllowsColumnReorder="true"
+              ColumnHeaderToolTip="Employee Information">
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=From}" 
+                      Header="From" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=To}" 
+                    Header="To" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Content}" 
+                    Header="Content" Width="50"/>
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Time}" 
+                    Header="Time" Width="50"/>
+
+
+                    </GridView>
+
+                </ListView.View>
+            </ListView>
+
             <view:HorizontalToggleSwitch    Margin="10"   xmlns:view="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" x:Name="ToggleSwitch1" IsChecked="True" CheckedContent="Draggable"></view:HorizontalToggleSwitch>
 
             <Button Command="{Binding Move}" Width="100" Height="30" Margin="10">Move</Button>
+
+            <numeric:SpinnerDecorator>
+                                <numeric:DoubleBox Value="{Binding Delay,  ValidatesOnNotifyDataErrors=True}"                    
+                       ValidationTrigger="PropertyChanged"
+                       MaxValue="10000"
+                       MinValue="0"
+                          
+                       StringFormat="N2"
+                       AllowSpinners="True"
+                       SpinUpdateMode="PropertyChanged"
+                       Increment="1000"/>
+                            </numeric:SpinnerDecorator>
         </StackPanel>
 
         <!--<paz:ZoomBorder Name="zoomBorder" Stretch="None" ZoomSpeed="1.2" 
                         Background="GhostWhite" ClipToBounds="True" Focusable="True"
                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
                         >-->
-            <denxorz:ZoomControl>
+        <denxorz:ZoomControl>
 
             <Grid    Width="600"
                 Height="600"
                 Background="Linen">
-            
-            <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}"/>
+
+                <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}"/>
 
 
-            <pwpf:NodesControl  x:Name="NodesControl" ItemsSource="{Binding Points}"
+                <pwpf:NodesControl  x:Name="NodesControl" ItemsSource="{Binding Points}"
                                   IsDraggable="{Binding ElementName=ToggleSwitch1, Path=IsChecked}"
                                 ></pwpf:NodesControl>
 
             </Grid>
-       
 
-            </denxorz:ZoomControl>
-                <!--</paz:ZoomBorder>-->
+
+        </denxorz:ZoomControl>
+        <!--</paz:ZoomBorder>-->
     </DockPanel>
 </UserControl>

@@ -4,6 +4,10 @@
 
 
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ConnectionCore;component/Themes/PointControl.xaml"></ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+    
     <Style  TargetType="{x:Type local:PathPolyLine}">
         <Setter Property="Template">
             <Setter.Value>
@@ -35,8 +39,8 @@
 
         <Setter Property="ItemTemplate">
             <Setter.Value>
-                <DataTemplate>
-                 
+                <DataTemplate >
+                    <Canvas>
                     <local:PathPolyLine  >
                         <local:PathPolyLine.StartPoint>
                             <MultiBinding Converter="{StaticResource PointToConnectionPoint}">
@@ -51,6 +55,10 @@
                             </MultiBinding>
                         </local:PathPolyLine.EndPoint>
                     </local:PathPolyLine>
+                        <local:PointControl Point="{Binding Point, Mode=OneWay}" Delay="{Binding Delay,Mode=OneWay}">
+                            
+                        </local:PointControl>
+                    </Canvas>
                 </DataTemplate>
             </Setter.Value>
         </Setter>

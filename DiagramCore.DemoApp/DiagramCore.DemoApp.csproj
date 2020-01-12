@@ -20,12 +20,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="UserControl4.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl2.xaml.cs">
       <DependentUpon>UserControl2.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="UserControl4.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControl2.xaml">
       <SubType>Designer</SubType>
     </Page>

@@ -24,8 +24,8 @@ namespace DiagramCore.DemoApp
         public DesignData1()
         {
             var p = new NodeViewModel(250, 250);
-            var ps = NodeFactory.BuildCircle(250, 250, 200, 6).ToArray();
-            _connections = ConnectionFactory.Build(p, ps);
+            var ps = BuildCircle(250, 250, 200, 6).ToArray();
+            _connections = ConnectionFactory.Build(p, 1000, ps);
             Observable.Interval(TimeSpan.FromSeconds(2)).Zip(ps.ToObservable().StartWith(p), (a, b) => b)
                 .ObserveOn(App.Current.Dispatcher)
                 .Subscribe(p =>
@@ -39,5 +39,33 @@ namespace DiagramCore.DemoApp
 
         public ObservableCollection<ConnectionViewModel> Connections => new ObservableCollection<ConnectionViewModel>(_connections);
 
+        public static IEnumerable<INode> BuildCircle(int x, int y, int radius, int number)
+        {
+            return NodeFactory.
+                SelectCircleCoordinates(x, y, radius, number)
+                .Select(a => new Node2ViewModel((int)a.x, (int)a.y));
+        }
+
+
+
+    }
+
+    public class Node2ViewModel : NodeViewModel
+    {
+
+        public Node2ViewModel(int x, int y) : base(x, y)
+        {
+            CanChange = false;
+
+        }
+        public override void NextChange(IMessage message)
+        {
+            if (message.Key.ToString() == nameof(NodeViewModel.Size))
+            {
+                var val = (int)message.Content;
+                this.Size = (int)(((int)val) / 2d);
+            }
+            base.NextChange(message);
+        }
     }
 }
