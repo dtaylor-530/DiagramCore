@@ -97,13 +97,13 @@ namespace AnimationNode
         private static readonly Storyboard _storyboard = new Storyboard();
         private static readonly Random rd = new Random();
 
+        static AnimationPathControl()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(AnimationPathControl), new FrameworkPropertyMetadata(typeof(AnimationPathControl)));
+        }
+
         public AnimationPathControl()
         {
-            Uri resourceLocater = new Uri("/AnimationNode;component/Themes/AnimationPathControl.xaml", System.UriKind.Relative);
-            ResourceDictionary resourceDictionary = (ResourceDictionary)Application.LoadComponent(resourceLocater);
-            Style = resourceDictionary["AnimationPathControlStyle"] as Style;
-
-   
             PathChanges
                 .Throttle(TimeSpan.FromSeconds(1))
                 .ObserveOnDispatcher()
