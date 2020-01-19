@@ -28,6 +28,8 @@ namespace ConnectionCore
 
         public static readonly DependencyProperty ConnectionPointsProperty = DependencyProperty.Register("ConnectionPoints", typeof(PointCollection), typeof(PathPolyLine), new PropertyMetadata(null));
 
+        public static readonly DependencyProperty ThicknessProperty = DependencyProperty.Register("Thickness", typeof(int), typeof(PathPolyLine), new PropertyMetadata(2));
+
 
 
         Subject<double> AngleChanges = new Subject<double>();
@@ -65,6 +67,13 @@ namespace ConnectionCore
         {
             get { return (object)GetValue(EndPointProperty); }
             set { SetValue(EndPointProperty, value); }
+        }
+
+
+        public int Thickness
+        {
+            get { return (int)GetValue(ThicknessProperty); }
+            set { SetValue(ThicknessProperty, value); }
         }
 
         private static void AngleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
