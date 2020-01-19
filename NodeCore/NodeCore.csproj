@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.6.1" />
     <PackageReference Include="Gu.Wpf.NumericInput" Version="0.5.4" />
     <PackageReference Include="MathConverter" Version="1.2.1.6" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.3" />

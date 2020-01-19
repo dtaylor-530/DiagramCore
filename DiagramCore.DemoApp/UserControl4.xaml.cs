@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 namespace DiagramCore.DemoApp
 {
     /// <summary>
-    /// Interaction logic for UserControl.xaml
+    /// Interaction logic for UserControl4.xaml
     /// </summary>
     public partial class UserControl4 : UserControl
     {

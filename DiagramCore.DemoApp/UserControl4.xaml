@@ -3,34 +3,137 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        
              xmlns:local="clr-namespace:DiagramCore.DemoApp"
              xmlns:pfl="clr-namespace:ConnectionCore;assembly=ConnectionCore"
              xmlns:pwpf="clr-namespace:NodeCore;assembly=NodeCore"
+             xmlns:paz="clr-namespace:Wpf.Controls.PanAndZoom;assembly=Wpf.Controls.PanAndZoom"
+             xmlns:denxorz="clr-namespace:Denxorz.ZoomControl;assembly=Denxorz.ZoomControl"
+             xmlns:numeric="http://gu.se/NumericInput"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <DockPanel>
-        <ToolBar DockPanel.Dock="Top">
-            <Slider x:Name="Scale" Minimum="0.1" Maximum="5" TickFrequency="0.1" Width="400" Value="1"></Slider>
-        </ToolBar>
-        <Grid>
-            <Grid.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform ScaleX="{Binding Value, ElementName=Scale}" ScaleY="{Binding Value, ElementName=Scale}"/>
-                    <!--<TranslateTransform X="{Binding Value, ElementName=MoveX}" 
-                                                    Y="{Binding Value, ElementName=MoveY}"/>-->
-                </TransformGroup>
-            </Grid.RenderTransform>
- 
-            <Grid.DataContext>
-                <local:DesignData1/>
-            </Grid.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"></BooleanToVisibilityConverter>
+    </UserControl.Resources>
+    <DockPanel LastChildFill="True">
+        <DockPanel.DataContext>
+            <local:TestData/>
+        </DockPanel.DataContext>
+        <StackPanel>
 
-            <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}"/>
+            <ListView ItemsSource="{Binding ElementName=NodesControl ,Path=SelectedObject.InwardMessages}" Width="225" Height="200" >
+
+                <ListView.View>
+
+                    <GridView AllowsColumnReorder="true"
+              ColumnHeaderToolTip="Inward Messages">
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Key}" 
+                    Header="Key" Width="50"/>
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=From}" 
+                      Header="From" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=To}" 
+                    Header="To" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Content}" 
+                    Header="Content" Width="50"/>
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Time}" 
+                    Header="Time" Width="50"/>
+
+
+                    </GridView>
+
+                </ListView.View>
+            </ListView>
+
             
-            <pwpf:NodesControl  x:Name="NodesControl" ItemsSource="{Binding Points}" >
+            <ListView ItemsSource="{Binding ElementName=NodesControl ,Path=SelectedObject.Nodes}" Width="225" Height="200" >
 
-            </pwpf:NodesControl>
-        </Grid>
+                <ListView.View>
+
+                    <GridView AllowsColumnReorder="true"
+      >
+               
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=X}" 
+                      Header="X" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Y}" 
+                    Header="Y" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Size}" 
+                    Header="Size" Width="50"/>
+                     
+
+
+                    </GridView>
+
+                </ListView.View>
+            </ListView>
+            
+
+            <ListView ItemsSource="{Binding ElementName=NodesControl ,Path=SelectedObject.Messages}" Width="225" Height="200" >
+
+                <ListView.View>
+
+                    <GridView AllowsColumnReorder="true"
+              ColumnHeaderToolTip="Messages">
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=From}" 
+                      Header="From" Width="40"/>
+
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=To}" 
+                    Header="To" Width="40"/>
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Key}" 
+                    Header="Key" Width="50"/>
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Content}" 
+                    Header="Content" Width="50"/>
+                        <GridViewColumn DisplayMemberBinding=
+                          "{Binding Path=Time}" 
+                    Header="Time" Width="50"/>
+
+
+                    </GridView>
+
+                </ListView.View>
+            </ListView>
+
+            <Button Command="{Binding Add}" Width="100" Height="30" Margin="10">Add</Button>
+        </StackPanel>
+
+      
+        <denxorz:ZoomControl>
+
+            <Grid    Width="1000"
+                Height="1000"
+                Background="GhostWhite">
+
+                <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}"/>
+              
+
+                <pwpf:NodesControl 
+                
+                    x:Name="NodesControl" ItemsSource="{Binding Points}"
+                                    
+                                  IsDraggable="{Binding ElementName=ToggleSwitch1, Path=IsChecked}"
+                                ></pwpf:NodesControl>
+
+            </Grid>
+
+
+        </denxorz:ZoomControl>
+    
     </DockPanel>
-
 </UserControl>

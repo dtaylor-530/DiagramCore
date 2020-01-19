@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -31,8 +32,25 @@ namespace NodeCore
         }
         private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            command.Execute(null);
+            if (Properties?.Cast<string>().Contains(e.PropertyName) ?? true)
+                command.Execute(null);
         }
 
+
+
+        public IEnumerable Properties
+        {
+            get { return (IEnumerable)GetValue(PropertiesProperty); }
+            set { SetValue(PropertiesProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Properties.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PropertiesProperty =
+            DependencyProperty.Register("Properties", typeof(IEnumerable), typeof(PropertyEventToCommandBehavior), new PropertyMetadata(null));
+
+
+
+
     }
+
 }

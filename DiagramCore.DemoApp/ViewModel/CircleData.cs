@@ -58,14 +58,14 @@ namespace DiagramCore.DemoApp
             CanChange = false;
 
         }
-        public override void NextChange(IMessage message)
+        public override void NextMessage(IMessage message)
         {
             if (message.Key.ToString() == nameof(NodeViewModel.Size))
             {
                 var val = (int)message.Content;
                 this.Size = (int)(((int)val) / 2d);
             }
-            base.NextChange(message);
+            base.NextMessage(message);
         }
     }
 }

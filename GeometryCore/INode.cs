@@ -16,7 +16,8 @@ namespace GeometryCore
         object Key { get; }
 
         //event Action<IMessage> MessageChanged;
+        ICollection<IMessage> Messages { get; }
 
-        void NextChange(IMessage message);
+        void NextMessage(IMessage message);
     }
 }

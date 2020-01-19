@@ -1,4 +1,5 @@
 ﻿
+using FluentValidation;
 using GeometryCore;
 using System;
 using System.Collections.Generic;
@@ -14,76 +15,120 @@ using System.Windows.Input;
 
 namespace NodeCore
 {
-    public class NodeViewModel : INode, IEquatable<NodeViewModel>
+    public class NodeViewModelValidator : AbstractValidator<NodeViewModel>
+    {
+        public NodeViewModelValidator()
+        {
+            RuleFor(customer => customer.Y).GreaterThanOrEqualTo(a => a.YThreshold + a.OldY);
+            RuleFor(customer => customer.X).GreaterThanOrEqualTo(a => a.XThreshold + a.OldX);
+            RuleFor(customer => customer.Size).LessThanOrEqualTo(a => NodeViewModel.MaxSize);
+            RuleFor(customer => customer.Size).GreaterThanOrEqualTo(a => NodeViewModel.MinSize);
+        }
+    }
+
+    public class NodeViewModel : ReactiveUI.FluentValidation.ReactiveValidationObject, INode, IEquatable<NodeViewModel>
     {
         private int x;
         private int y;
         private bool isSelected;
         private bool canChange = true;
         private int size;
+        private int yThreshold = 10;
+        private int xThreshold = 10;
+        private int sizeThreshold;
 
         public const int MinSize = 50;
         public const int MaxSize = 300;
 
-        public NodeViewModel() : this(100)
+        public NodeViewModel(object key) : this(key, 50)
         {
         }
 
-        public NodeViewModel(int size)
+        public NodeViewModel(object key, int size) : base(new NodeViewModelValidator())
         {
             Command = new SelectCommand(this);
             DragCommand = new DragCommand(this);
             ReSizeCommand = new ReSizeCommand(this);
             Size = size;
+            Key = key;
             this.PropertyChanged += NodeViewModel_PropertyChanged;
+        }
+
+        public NodeViewModel(int x, int y, object key, int size = 50) : this(key, size)
+        {
+            this.X = x;
+            this.Y = y;
         }
 
         private void NodeViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(NodeViewModel.Size))
+            if (e.PropertyName == nameof(Size))
             {
                 var diff = Size - OldSize;
                 this.X += (int)(diff / 2d);
                 this.Y -= (int)(diff / 2d);
             }
-        }
-
-        public NodeViewModel(int x, int y, int size = 50) : this(size)
-        {
-            this.x = x;
-            this.y = y;
+            if (e.PropertyName != string.Empty)
+            {
+                var property = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
+                //if (e.PropertyName == nameof(Y))
+                //{
+                //    property = (this.Y, this.Size);
+                //}
+                var message = new Message(this.Key, null, e.PropertyName, property);
+                Messages.Add(message);
+            }
         }
 
         public int X
         {
             get => x;
-            set { if (x != value) { OldX = x; this.x = value; RaisePropertyChanged(); } }
+            set { OldX = x; RaiseAndValidateAndSetIfChanged(ref x, value); }
         }
 
         public int Y
         {
             get => y;
-            set { if (y != value) { OldY = y; this.y = value; RaisePropertyChanged(); } }
+            set { OldY = y; RaiseAndValidateAndSetIfChanged(ref y, value); }
         }
 
         public int Size
         {
             get => size;
-            set { if (size != value) { OldSize = size; this.size = value; RaisePropertyChanged(); } }
+            set { OldSize = size; RaiseAndValidateAndSetIfChanged(ref size, value); }
         }
+
+
+        public int XThreshold
+        {
+            get => xThreshold;
+            set => RaiseAndValidateAndSetIfChanged(ref xThreshold, value);
+        }
+
+        public int YThreshold
+        {
+            get => yThreshold;
+            set => RaiseAndValidateAndSetIfChanged(ref yThreshold, value);
+        }
+
+        public int SizeThreshold
+        {
+            get => sizeThreshold;
+            set => RaiseAndValidateAndSetIfChanged(ref sizeThreshold, value);
+        }
+
 
         public bool IsSelected
         {
             get => isSelected;
-            set { if (isSelected != value) { this.isSelected = value; RaisePropertyChanged(); } }
+            set => RaiseAndValidateAndSetIfChanged(ref isSelected, value);
         }
 
         public bool CanChange
         {
             get => canChange;
-            set { if (canChange != value) { this.canChange = value; RaisePropertyChanged(); } }
+            set => RaiseAndValidateAndSetIfChanged(ref canChange, value);
         }
-
 
 
         public object Object { get; set; } = "Node";
@@ -98,6 +143,8 @@ namespace NodeCore
         [Browsable(false)]
         public int OldSize { get; private set; }
 
+
+
         [Browsable(false)]
         public ICommand Command { get; }
 
@@ -108,27 +155,21 @@ namespace NodeCore
         public ICommand ReSizeCommand { get; }
 
 
-        public ObservableCollection<IMessage> Messages { get; } = new ObservableCollection<IMessage>();
+        public ObservableCollection<IMessage> InwardMessages { get; } = new ObservableCollection<IMessage>();
+
+        public ObservableCollection<INode> Nodes { get; } = new ObservableCollection<INode>();
+
+
+        public ICollection<IMessage> Messages { get; } = new ObservableCollection<IMessage>();
 
         public object Key { get; set; }
 
-        #region propertychanged
-
-        [Browsable(false)]
-        public event PropertyChangedEventHandler PropertyChanged;
-        //public event Action<IMessage> MessageChanged;
-
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
 
         #region equality
 
         public bool Equals([AllowNull] NodeViewModel other)
         {
-            return other != null && this.X == other.X && this.Y == other.Y && this.Size == other.Size;
+            return other != null && this.X == other.X && this.Y == other.Y && this.Size == other.Size && this.Key == other.Key;
         }
 
         public override int GetHashCode()
@@ -164,18 +205,26 @@ namespace NodeCore
             return $"{x} {y} {Size}";
         }
 
-        public virtual void NextChange(IMessage message)
+        public virtual void NextMessage(IMessage message)
         {
             if (message.Key.ToString() != string.Empty)
             {
-                Messages.Add(message);
+                InwardMessages.Add(message);
                 this.RaisePropertyChanged(string.Empty);
+
+                var node = Nodes.SingleOrDefault(a => a.Key.Equals(message.From));
+
+                if (node == null)
+                {
+                    node = new NodeViewModel(message.From);
+                    Nodes.Add(node);
+                }
+
+                typeof(NodeViewModel).GetProperty(message.Key.ToString()).SetValue(node, message.Content);
+
             }
         }
-        //public void NextMessage(IMessage message)
-        //{
-        //    this.MessageChanged(new Message(this.Object, null, message.Content));
-        //}
+
     }
 
 
@@ -200,6 +249,8 @@ namespace NodeCore
                 (pvm).IsSelected = true;
         }
     }
+
+
 
     public class DragCommand : ICommand
     {

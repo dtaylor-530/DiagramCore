@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace DiagramCore.DemoApp
 {
@@ -19,19 +20,20 @@ namespace DiagramCore.DemoApp
     {
         Random random = new Random();
         private int delay = 1000;
-        NodeViewModel[] points;
+        List<NodeViewModel> points;
 
         Lazy<ConnectionViewModel[]> _connections;
+        private int yThreshold;
 
         public DesignData()
         {
             Move = new MoveCommand(this);
 
-            points = new[]{
-                new NodeViewModel { X = 50, Y = 50, Object=Brushes.Blue, Key=1},
-                new NodeViewModel { X = 500, Y = 50, Object=Brushes.Red, Key=2},
-                new NodeViewModel { X = 240, Y = 250, Object=Brushes.Green,Key=3}
-            };
+            points = new List<NodeViewModel>(new[]{ 
+                new NodeViewModel(1) { X = 50,  Y = 50,  Object=new Rectangle { Fill=Brushes.Blue,  Height=10, Width=40 }},
+                new NodeViewModel(2) { X = 500, Y = 50,  Object=new Rectangle { Fill=Brushes.Red,   Height=10, Width=40 }},
+                new NodeViewModel(3) { X = 240, Y = 250, Object=new Rectangle { Fill=Brushes.Green, Height=10, Width=40 }}
+            });
 
             _connections = new Lazy<ConnectionViewModel[]>(() =>
                   new[]{
@@ -52,17 +54,20 @@ namespace DiagramCore.DemoApp
                     connection.Delay = Delay;
                 }
             }
+            if (e.PropertyName == nameof(YThreshold))
+            {
+                foreach (var node in points)
+                {
+                    node.YThreshold = YThreshold;
+                }
+            }
         }
 
-        public NodeViewModel[] Points
-        {
-            get => points;
-        }
+        public List<NodeViewModel> Points => points;
 
         public ConnectionViewModel[] Connections => _connections.Value;
 
 
-        public MoveCommand Move { get; }
 
         public int Delay
         {
@@ -70,8 +75,14 @@ namespace DiagramCore.DemoApp
             set { delay = value; this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Delay))); }
         }
 
+        public int YThreshold
+        {
+            get => yThreshold;
+            set { yThreshold = value; this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(YThreshold))); }
+        }
 
 
+        public MoveCommand Move { get; }
 
         public class MoveCommand : ICommand
         {
@@ -96,12 +107,13 @@ namespace DiagramCore.DemoApp
         }
 
 
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void MoveNodes()
         {
 
-            foreach (var point in points)
+            foreach (var point in points.ToArray())
             {
                 point.X = random.Next(point.X - 30, point.X + 30);
                 point.Y = random.Next(point.Y - 30, point.Y + 30);

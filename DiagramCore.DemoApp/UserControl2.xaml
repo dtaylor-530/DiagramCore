@@ -20,12 +20,76 @@
             <local:DesignData/>
         </DockPanel.DataContext>
         <StackPanel DockPanel.Dock="Left">
-
+            <numeric:DoubleBox  
+                            x:Name="DoubleBoxX"
+                       MaxValue="1000"
+                       MinValue="0"
+                            Value="500"
+                       StringFormat="N"
+       
+                       SpinUpdateMode="PropertyChanged"
+                 />
+            <numeric:DoubleBox  
+                            x:Name="DoubleBoxY"
+                       MaxValue="1000"
+                       MinValue="0"
+                            Value="500"
+                       StringFormat="N"
+                    
+                       SpinUpdateMode="PropertyChanged"
+                  />
 
             <windows:PropertyGrid  Margin="10" xmlns:windows="clr-namespace:SoftFluent.Windows;assembly=SoftFluent.Windows" 
                             SelectedObject="{Binding ElementName=NodesControl ,Path=SelectedObject}" Width="225" />
 
-            <ListView ItemsSource="{Binding ElementName=NodesControl ,Path=SelectedObject.Messages}" Width="225" Height="500" >
+
+
+            <view:HorizontalToggleSwitch    Margin="10"   xmlns:view="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" x:Name="ToggleSwitch1" IsChecked="True" CheckedContent="Draggable"></view:HorizontalToggleSwitch>
+
+            <Button Command="{Binding Move}" Width="100" Height="30" Margin="10">Move</Button>
+            <Button Command="{Binding AddXCommand, ElementName=NodesControl}" CommandParameter="{Binding ElementName=DoubleBox1, Path=Value}" Width="150" Height="30" Margin="10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Add X" Margin="4"></TextBlock>
+                    <numeric:SpinnerDecorator Margin="4" Width="80">
+                        <numeric:DoubleBox  
+                            x:Name="DoubleBox1"
+                       MaxValue="1000"
+                       MinValue="0"
+                            Value="100"
+                       StringFormat="N2"
+                       AllowSpinners="True"
+                       SpinUpdateMode="PropertyChanged"
+                       Increment="100"/>
+                    </numeric:SpinnerDecorator>
+                </StackPanel>
+
+            </Button>
+
+            <numeric:SpinnerDecorator>
+                <numeric:DoubleBox Value="{Binding Delay,  ValidatesOnNotifyDataErrors=True}"                    
+                       ValidationTrigger="PropertyChanged"
+                       MaxValue="10000"
+                       MinValue="0"
+                          
+                       StringFormat="N2"
+                       AllowSpinners="True"
+                       SpinUpdateMode="PropertyChanged"
+                       Increment="1000"/>
+            </numeric:SpinnerDecorator>
+
+            <numeric:SpinnerDecorator>
+                <numeric:DoubleBox Value="{Binding YThreshold,  ValidatesOnNotifyDataErrors=True}"                    
+                       ValidationTrigger="PropertyChanged"
+                       MaxValue="100"
+                       MinValue="0"
+                          
+                       StringFormat="N2"
+                       AllowSpinners="True"
+                       SpinUpdateMode="PropertyChanged"
+                       Increment="2"/>
+            </numeric:SpinnerDecorator>
+
+            <ListView ItemsSource="{Binding ElementName=NodesControl ,Path=SelectedObject.Messages}" Width="225" Height="400" >
 
                 <ListView.View>
 
@@ -52,22 +116,6 @@
 
                 </ListView.View>
             </ListView>
-
-            <view:HorizontalToggleSwitch    Margin="10"   xmlns:view="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" x:Name="ToggleSwitch1" IsChecked="True" CheckedContent="Draggable"></view:HorizontalToggleSwitch>
-
-            <Button Command="{Binding Move}" Width="100" Height="30" Margin="10">Move</Button>
-
-            <numeric:SpinnerDecorator>
-                                <numeric:DoubleBox Value="{Binding Delay,  ValidatesOnNotifyDataErrors=True}"                    
-                       ValidationTrigger="PropertyChanged"
-                       MaxValue="10000"
-                       MinValue="0"
-                          
-                       StringFormat="N2"
-                       AllowSpinners="True"
-                       SpinUpdateMode="PropertyChanged"
-                       Increment="1000"/>
-                            </numeric:SpinnerDecorator>
         </StackPanel>
 
         <!--<paz:ZoomBorder Name="zoomBorder" Stretch="None" ZoomSpeed="1.2" 
@@ -76,14 +124,18 @@
                         >-->
         <denxorz:ZoomControl>
 
-            <Grid    Width="600"
-                Height="600"
-                Background="Linen">
+            <Grid    Width="1000"
+                Height="1000"
+                Background="GhostWhite">
 
                 <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}"/>
+                <!--Width="{Binding ElementName=DoubleBoxX ,Path=Value}"
+                           Height="{Binding ElementName=DoubleBoxY ,Path=Value}"-->
 
-
-                <pwpf:NodesControl  x:Name="NodesControl" ItemsSource="{Binding Points}"
+                <pwpf:NodesControl 
+                
+                    x:Name="NodesControl" ItemsSource="{Binding Points}"
+                                    
                                   IsDraggable="{Binding ElementName=ToggleSwitch1, Path=IsChecked}"
                                 ></pwpf:NodesControl>
 
