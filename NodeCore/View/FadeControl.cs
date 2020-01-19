@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
@@ -14,15 +15,21 @@ namespace NodeCore
         public override void OnApplyTemplate()
         {
             ellipse = this.GetTemplateChild("PART_Ellipse") as Ellipse;
+            ellipse.Fill = new SolidColorBrush(Color);
             if (FadeIn)
             {
                 ellipse.Opacity = 0;
             }
         }
 
-        // public ICommand FadeCommand { get; }
+        public Color Color
+        {
+            get { return (Color)GetValue(ColorProperty); }
+            set { SetValue(ColorProperty, value); }
+        }
 
-
+        public static readonly DependencyProperty ColorProperty =
+            DependencyProperty.Register("Color", typeof(Color), typeof(FadeControl), new PropertyMetadata(Colors.Red));
 
         public ICommand FadeCommand
         {
@@ -41,7 +48,6 @@ namespace NodeCore
         public FadeControl()
         {
             FadeCommand = new FadeCommand(this);
-
         }
 
         public void Fade()
@@ -53,18 +59,14 @@ namespace NodeCore
         }
 
 
-
         public bool FadeIn
         {
             get { return (bool)GetValue(FadeInProperty); }
             set { SetValue(FadeInProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for FadeIn.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FadeInProperty =
             DependencyProperty.Register("FadeIn", typeof(bool), typeof(FadeControl), new PropertyMetadata(true));
-
-
 
         public static void RunStoryBoard(DependencyObject element, bool fadeIn)
         {

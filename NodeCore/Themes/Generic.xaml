@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:math="http://hexinnovation.com/math"
-                  
+                  xmlns:sys="clr-namespace:System;assembly=System.Runtime"
                     xmlns:local="clr-namespace:NodeCore"
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:numeric="http://gu.se/NumericInput">
@@ -98,12 +98,24 @@
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
 
-                                    <local:FadeControl Height="10" Width="10" >
+                                    <local:FadeControl Height="10" Width="10" Color="Green">
                                         <i:Interaction.Behaviors>
                                             <local:PropertyEventToCommandBehavior/>
                                         </i:Interaction.Behaviors>
                                     </local:FadeControl>
 
+                                    <local:FadeControl Height="10" Width="10" >
+                                        <i:Interaction.Behaviors>
+                                            <local:PropertyEventToCommandBehavior>
+                                                <local:PropertyEventToCommandBehavior.Properties>
+                                                    <x:Array Type="sys:String">
+                                                        <sys:String>IsValid</sys:String>
+                                                    </x:Array>
+                                                </local:PropertyEventToCommandBehavior.Properties>
+                                            </local:PropertyEventToCommandBehavior>
+                                        </i:Interaction.Behaviors>
+                                    </local:FadeControl>
+                                    
                                     <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding Key}"></ContentPresenter>
 
                                     <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding Object}"></ContentPresenter>
