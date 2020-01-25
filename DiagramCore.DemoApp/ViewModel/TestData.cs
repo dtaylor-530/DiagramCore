@@ -15,7 +15,7 @@ namespace DiagramCore.DemoApp
 
 
 
-    public class TestData : INotifyPropertyChanged
+    public class TestData : Jellyfish.ObservableObject
     {
         Random random = new Random();
         private int delay = 1000;
@@ -30,7 +30,7 @@ namespace DiagramCore.DemoApp
             points = new ObservableCollection<NodeViewModel>(new[]{
                 new Node4ViewModel(50,  50,1) ,
                 new Node4ViewModel( 500,  50,2),
-                new Node4ViewModel (  240,  250,3),
+                new Node4ViewModel (240, 250,3),
             });
 
             _connections = new Lazy<ObservableCollection<ConnectionViewModel>>(() =>
@@ -39,7 +39,7 @@ namespace DiagramCore.DemoApp
                     new ConnectionViewModel(points[1],points[2]){ Delay=delay}
                      });
 
-            this.Add = new AddCommand(this);
+            this.Add = new Jellyfish.RelayCommand(a=>this.AddNode());
             this.PropertyChanged += DesignData_PropertyChanged;
         }
 
@@ -70,46 +70,19 @@ namespace DiagramCore.DemoApp
         public int Delay
         {
             get => delay;
-            set { delay = value; this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Delay))); }
+            set { delay = value; this.Notify(nameof(Delay)); }
         }
 
         public int YThreshold
         {
             get => yThreshold;
-            set { yThreshold = value; this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(YThreshold))); }
+            set { yThreshold = value; this.Notify(nameof(YThreshold)); }
         }
 
 
+        public ICommand Add { get; }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-
-
-        public AddCommand Add { get; }
-
-        public class AddCommand : ICommand
-        {
-            private TestData pvm;
-
-            public event EventHandler CanExecuteChanged;
-
-            public bool CanExecute(object parameter)
-            {
-                return true;
-            }
-            public AddCommand(TestData pvm)
-            {
-                this.pvm = pvm;
-            }
-
-
-            public void Execute(object parameter)
-            {
-                (pvm)?.AddNode();
-            }
-        }
-
+   
         private void AddNode()
         {
 

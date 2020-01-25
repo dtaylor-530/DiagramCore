@@ -64,9 +64,9 @@ namespace NodeCore
         {
             if (e.PropertyName == nameof(Size))
             {
-                var diff = Size - OldSize;
-                this.X += (int)(diff / 2d);
-                this.Y -= (int)(diff / 2d);
+                //var diff = Size - OldSize;
+                //this.X += (int)(diff / 2d);
+                //this.Y -= (int)(diff / 2d);
             }
             if (e.PropertyName != string.Empty)
             {

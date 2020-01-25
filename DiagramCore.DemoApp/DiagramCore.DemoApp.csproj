@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Denxorz.ZoomControl" Version="1.1.0" />
+    <PackageReference Include="Jellyfish" Version="1.0.42" />
+    <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
+    <PackageReference Include="OnTheFlyStats" Version="3.1.0" />
     <PackageReference Include="SoftFluent.Windows" Version="1.0.1.6" />
     <PackageReference Include="ToggleSwitch" Version="1.1.2" />
     <PackageReference Include="Wpf.Controls.PanAndZoom" Version="2.3.1" />
@@ -20,12 +23,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="UserControl7.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl2.xaml.cs">
       <DependentUpon>UserControl2.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="UserControl7.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControl2.xaml">
       <SubType>Designer</SubType>
     </Page>

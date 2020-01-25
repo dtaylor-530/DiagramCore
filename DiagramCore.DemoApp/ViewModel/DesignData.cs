@@ -13,9 +13,6 @@ using System.Windows.Shapes;
 namespace DiagramCore.DemoApp
 {
 
-
-
-
     public class DesignData : INotifyPropertyChanged
     {
         Random random = new Random();
@@ -27,7 +24,7 @@ namespace DiagramCore.DemoApp
 
         public DesignData()
         {
-            Move = new MoveCommand(this);
+            Move = new Jellyfish.RelayCommand(a=>MoveNodes());
 
             points = new List<NodeViewModel>(new[]{ 
                 new NodeViewModel(1) { X = 50,  Y = 50,  Object=new Rectangle { Fill=Brushes.Blue,  Height=10, Width=40 }},
@@ -67,8 +64,6 @@ namespace DiagramCore.DemoApp
 
         public ConnectionViewModel[] Connections => _connections.Value;
 
-
-
         public int Delay
         {
             get => delay;
@@ -82,29 +77,7 @@ namespace DiagramCore.DemoApp
         }
 
 
-        public MoveCommand Move { get; }
-
-        public class MoveCommand : ICommand
-        {
-            private DesignData pvm;
-
-            public event EventHandler CanExecuteChanged;
-
-            public bool CanExecute(object parameter)
-            {
-                return true;
-            }
-            public MoveCommand(DesignData pvm)
-            {
-                this.pvm = pvm;
-            }
-
-
-            public void Execute(object parameter)
-            {
-                (pvm)?.MoveNodes();
-            }
-        }
+        public ICommand Move { get; }
 
 
 

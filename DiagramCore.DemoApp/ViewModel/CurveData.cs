@@ -31,27 +31,18 @@ namespace DiagramCore.DemoApp
         public CurveData()
         {
 
-            //_connections = new Lazy<ObservableCollection<ConnectionViewModel>>(() =>
-            //      new ObservableCollection<ConnectionViewModel>{
-            //        new ConnectionViewModel(points[0],points[2]){Delay=delay },
-            //        new ConnectionViewModel(points[1],points[2]){ Delay=delay}
-            //         });
+
 
             var ps = BuildCurve(250, 250, 200, 6).ToArray();
 
             this.Add = new AddCommand(this);
             this.PropertyChanged += DesignData_PropertyChanged;
-            //var apoint = new Node4ViewModel(100, 100, "A") { Size = 1 };
-            //points.Add(apoint);
-            //apoints.Add(apoint);
+ 
             Observable.Interval(TimeSpan.FromSeconds(2)).Zip(ps.ToObservable(), (a, b) => b)
               .ObserveOn(App.Current.Dispatcher)
               .Subscribe(p =>
               {
-                  //foreach(var point in points)
-                  //{
-                  //    var conn = new ConnectionViewModel(point, p) { Delay = delay };
-                  //}           points.Add(p);
+               
                   var apoint = new Node4ViewModel(p.X, 100, "A") { Size = 30 };
                   apoints.Add(apoint);
                   points.Add(apoint);

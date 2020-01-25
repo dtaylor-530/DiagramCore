@@ -94,17 +94,18 @@ namespace NodeCore
             {
                 if (nodesControl.IsDraggable == false)
                 {
-
                     PositionChanged(nodesControl, viewModel, propertyName);
-
                 }
+
                 nodesControl.Story_Completed(nodesControl);
-                var match = nodesControl.GetMatchByX(viewModel);
-                if (match != default && propertyName == nameof(NodeViewModel.X))
-                {
-                    nodesControl.Merge(match, viewModel);
-                }
 
+                foreach (var match in nodesControl.GetMatchByX(viewModel).ToArray())
+                {
+                    if (match != default && propertyName == nameof(NodeViewModel.X))
+                    {
+                        nodesControl.Merge(match, viewModel);
+                    }
+                }
             }
         }
         private static void Reselect(NodesControl nodesControl, NodeViewModel viewModel)
@@ -124,10 +125,8 @@ namespace NodeCore
 
         private void Merge(NodeViewModel match, NodeViewModel viewModel)
         {
-
             var y = (int)((1d * match.Y * match.Size + viewModel.Y * viewModel.Size) / (match.Size + viewModel.Size));
             var size = (int)((match.Size + viewModel.Size) / 2d);
-
 
             match.Size = size;
             viewModel.Size = size;
@@ -135,7 +134,6 @@ namespace NodeCore
             match.Y = y;
             Removals.Push(match);
             viewModel.Y = y;
-
         }
 
         private static object ItemsSourceCoerce(DependencyObject d, object baseValue)
@@ -192,11 +190,11 @@ namespace NodeCore
             }
         }
 
-        private NodeViewModel GetMatchByX(NodeViewModel nodeViewModel)
+        private IEnumerable<NodeViewModel> GetMatchByX(NodeViewModel nodeViewModel)
         {
-            var item = this.Items.OfType<NodeViewModel>().Where(a => a.X == nodeViewModel.X && a.Y != nodeViewModel.Y).SingleOrDefault();
+            var items = this.Items.OfType<NodeViewModel>().Where(a => a.X == nodeViewModel.X && a.Y != nodeViewModel.Y);
 
-            return item;
+            return items;
         }
 
 

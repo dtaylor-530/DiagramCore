@@ -6,17 +6,23 @@
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:numeric="http://gu.se/NumericInput">
 
+    <!--Converters-->
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <math:MathConverter x:Key="math" />
 
 
+    
+    <!--Templates-->
+    
     <ControlTemplate x:Key="MoveTemplate">
         <Grid>
             <Ellipse  Fill="SlateGray"></Ellipse>
             <Ellipse Margin="4"  Fill="White"></Ellipse>
 
-   
-                <Path Fill="Black" Stretch="Uniform" Margin="5"
+
+            <Path Fill="Black" Stretch="Uniform" Margin="5"
                     Data="M13,11H18L16.5,9.5L17.92,8.08L21.84,12L17.92,15.92L16.5,14.5L18,13H13V18L14.5,16.5L15.92,17.92L12,21.84L8.08,17.92L9.5,16.5L11,18V13H6L7.5,14.5L6.08,15.92L2.16,12L6.08,8.08L7.5,9.5L6,11H11V6L9.5,7.5L8.08,6.08L12,2.16L15.92,6.08L14.5,7.5L13,6V11Z" />
-      
+
             <!--<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Medium">Node</TextBlock>-->
 
         </Grid>
@@ -34,19 +40,36 @@
                 Data="M492,0H344.212c-11.046,0-20,8.954-20,20s8.954,20,20,20h99.503L283.394,200.322c-7.811,7.811-7.811,20.474,0,28.284
 			c7.81,7.81,20.473,7.811,28.284,0L472,68.284v99.503c0,11.046,8.954,20,20,20c11.046,0,20-8.954,20-20V20
 			C512,9.115,503.154,0,492,0z"/>
-       
+
                 <Path Fill="Black" Stretch="Uniform" 
        Data="M228.606,283.394c-7.811-7.81-20.474-7.811-28.284,0L40,443.716v-99.503c0-11.046-8.954-20-20-20s-20,8.954-20,20V492
 			c0,10.866,8.853,20,20,20h147.788c11.046,0,20-8.954,20-20c0-11.046-8.954-20-20-20H68.284l160.322-160.322
 			C236.417,303.867,236.417,291.204,228.606,283.394z"/>
 
-                <!--<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Medium">Node</TextBlock>-->
             </Grid>
         </Grid>
     </ControlTemplate>
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    <math:MathConverter x:Key="math" />
 
+
+    <!--<Style TargetType="ContentPresenter">
+        <Setter Property="Canvas.Left">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource math}" ConverterParameter="x-y/2">
+                    <Binding Path="X" />
+                    <Binding Path="Size" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Canvas.Left">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource math}" ConverterParameter="x-y/2">
+                    <Binding Path="Y" />
+                    <Binding Path="Size" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+    <!--Style-->
 
     <Style  TargetType="local:NodesControl" BasedOn="{StaticResource {x:Type ItemsControl}}">
 
@@ -70,10 +93,22 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Left" Value="{Binding X, Mode=TwoWay}"/>
-                    <Setter Property="Canvas.Top" Value="{Binding Y,Mode=TwoWay}"/>
-                    <!--<Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource math}, ConverterParameter='500-x', Mode=TwoWay}"/>-->
-                    <!--<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>-->
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource math}" ConverterParameter="x">
+                                <Binding Path="X" />
+                                <Binding Path="Size" />
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Canvas.Top">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource math}" ConverterParameter="x">
+                                <Binding Path="Y" />
+                                <Binding Path="Size" />
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -115,7 +150,7 @@
                                             </local:PropertyEventToCommandBehavior>
                                         </i:Interaction.Behaviors>
                                     </local:FadeControl>
-                                    
+
                                     <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding Key}"></ContentPresenter>
 
                                     <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding Object}"></ContentPresenter>

@@ -1,9 +1,12 @@
-﻿using GeometryCore;
+﻿using ConnectionCore.Common;
+using GeometryCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,87 +22,78 @@ namespace ConnectionCore
         private static readonly string[] props = new[] { nameof(INode.X), nameof(INode.Y), nameof(INode.Size) };
         private INode node1;
         private INode node2;
-        private Point point;
+        private Point point1;
+        private Point point2;
         private bool biDirectional = true;
         private double decayFactor = 0.02d;
         private bool isSelected;
+        ConnectionNodeViewModel node = new ConnectionNodeViewModel();
 
         public ConnectionViewModel(INode node1, INode node2, bool birectional = true)
         {
             this.node1 = node1;
             this.node2 = node2;
 
-            foreach (var message in node1.Messages)
+            ObservableCollectionHelper.MakeObservable(node1.Messages).Subscribe(message =>
             {
                 SendMessage1(message);
-            }
-
-            node1.PropertyChanged += PropertyChanged1;
+            });
 
             this.biDirectional = birectional;
 
+
             if (birectional)
-                foreach (var message in node2.Messages)
+            {
+                ObservableCollectionHelper.MakeObservable(node2.Messages).Subscribe(message =>
                 {
                     SendMessage2(message);
-                }
-            node2.PropertyChanged += PropertyChanged2;
+                });
+
+            }
+
+            var dis1 = ObservableCollectionHelper.MakeObservable(this.Messages1)
+                               .Where(a => a.Key.Equals(nameof(INode.Y)))
+                .Subscribe(a =>
+                {
+                    (int val, double deviation) = ((int, double))a.Content;
+                    node.OnNext1(val);
+                });
+
+            var dis2 = ObservableCollectionHelper.MakeObservable(this.Messages2)
+                .Where(a => a.Key.Equals(nameof(INode.Y)))
+                .Subscribe(a =>
+            {
+                (int val, double deviation) = ((int, double))a.Content;
+                node.OnNext2(val);
+            });
+
             SelectCommand = new SelectCommand(this);
         }
 
 
 
-        private void PropertyChanged1(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-
-            if (e.PropertyName != string.Empty &&
-                props.Contains(e.PropertyName))
-            {
-                if (e.PropertyName == nameof(node1.X))
-                    RaisePropertyChanged(nameof(this.X1));
-                if (e.PropertyName == nameof(node1.Y))
-                    RaisePropertyChanged(nameof(this.Y1));
-
-
-
-                Point = new Point(X1, Y1);
-                Point = new Point(X2, Y2);
-
-                Task.Delay(Delay).ContinueWith(a =>
-                {
-                    var val = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
-                    IMessage message = new Message(node1.Key, node2.Key, e.PropertyName, val);
-                    if (message.Key.Equals(nameof(node1.Y)))
-                        message = Modify(message, node1.Size);
-                    Messages.Add(message);
-                    node2.NextMessage(message);
-
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-        }
 
         private void SendMessage1(IMessage message)
         {
-
             if (message.Key.Equals(string.Empty) == false &&
-              props.Contains(message.Key.ToString()))
+                props.Contains(message.Key.ToString()))
             {
                 message = new Message(message.From, node2.Key, message.Key, message.Content);
+
                 if (message.Key.Equals(nameof(node1.X)))
                     RaisePropertyChanged(nameof(this.X1));
+
                 if (message.Key.Equals(nameof(node1.Y)))
                 {
                     RaisePropertyChanged(nameof(this.Y1));
                     message = Modify(message, node1.Size);
                 }
-                //if (message.Key.Equals(nameof(node1.Size)))
-                //    message = Modify(message, node1.Size);
-                Point = new Point(X1, Y1);
-                Point = new Point(X2, Y2);
+
+                MovePoint1To2();
 
                 Task.Delay(Delay).ContinueWith(a =>
                 {
-                    Messages.Add(message);
+                    Messages1.Add(message);
                     node2.NextMessage(message);
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -107,63 +101,34 @@ namespace ConnectionCore
         }
 
 
-
-
-        private void PropertyChanged2(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (biDirectional == true &&
-                e.PropertyName != string.Empty &&
-               props.Contains(e.PropertyName))
-            {
-                if (e.PropertyName == nameof(node1.X))
-                    RaisePropertyChanged(nameof(this.X2));
-                if (e.PropertyName == nameof(node1.Y))
-                    RaisePropertyChanged(nameof(this.Y2));
-
-                Point = new Point(X2, Y2);
-                Point = new Point(X1, Y1);
-
-                Task.Delay(Delay).ContinueWith(a =>
-                   {
-                       var val = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
-                       IMessage message = new Message(node2.Key, node1.Key, e.PropertyName, val);
-                       if (message.Key.Equals(nameof(node2.Y)))
-                           message = Modify(message, node2.Size);
-                       Messages.Add(message);
-                       node1.NextMessage(message);
-                   }, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-        }
-
         private void SendMessage2(IMessage message)
         {
 
-            if (biDirectional == true &&
-                message.Key.Equals(string.Empty) == false &&
-               props.Contains(message.Key.ToString()))
+            if (message.Key.Equals(string.Empty) == false &&
+                props.Contains(message.Key.ToString()) &&
+                biDirectional == true)
             {
                 message = new Message(message.From, node1.Key, message.Key, message.Content);
+
                 if (message.Key.Equals(nameof(node1.X)))
                     RaisePropertyChanged(nameof(this.X2));
+
                 if (message.Key.Equals(nameof(node1.Y)))
                 {
                     RaisePropertyChanged(nameof(this.Y2));
                     message = Modify(message, node2.Size);
                 }
 
-
-                Point = new Point(X2, Y2);
-                Point = new Point(X1, Y1);
+                MovePoint2To1();
 
                 Task.Delay(Delay).ContinueWith(a =>
                 {
-                    Messages.Add(message);
+                    Messages2.Add(message);
                     node1.NextMessage(message);
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
-
 
 
         public int Delay
@@ -180,29 +145,20 @@ namespace ConnectionCore
 
         public double Y2 => node2.Y + +node1.Size / DivideFactor;
 
-        public Point Point { get => point; set { if (value != point) { point = value; RaisePropertyChanged(); } } }
+        public Point Point1 { get => point1; set { if (value != point1) { point1 = value; RaisePropertyChanged(); } } }
 
-        //
+        public Point Point2 { get => point2; set { if (value != point2) { point2 = value; RaisePropertyChanged(); } } }
+
+
         public double DecayFactor { get => decayFactor; set { if (value != decayFactor) { decayFactor = value; RaisePropertyChanged(); } } }
 
         public bool BiDirectional { get => biDirectional; set { if (value != biDirectional) { biDirectional = value; RaisePropertyChanged(); } } }
 
-        public ObservableCollection<IMessage> Messages { get; } = new ObservableCollection<IMessage>();
+        public ObservableCollection<IMessage> Messages1 { get; } = new ObservableCollection<IMessage>();
 
-        private IMessage Modify(IMessage message, int size)
-        {
-            if (message.Key.Equals(nameof(node1.Y)))
-            {
-                var val = System.Convert.ToInt32(message.Content);
+        public ObservableCollection<IMessage> Messages2 { get; } = new ObservableCollection<IMessage>();
 
-                // the decay (like half-life)
-                var weight = size * Math.Exp(-decayFactor * XDistance);
-
-                message = new Message(message.From, message.To, message.Key, (val, weight));
-
-            }
-            return message;
-        }
+        public ConnectionNodeViewModel Node => node;
 
         private double XDistance => Math.Abs(X1 - X2);
 
@@ -232,8 +188,42 @@ namespace ConnectionCore
         public ICommand SelectCommand { get; }
 
 
+        private IMessage Modify(IMessage message, int size)
+        {
+            if (message.Key.Equals(nameof(node1.Y)))
+            {
+                var val = System.Convert.ToInt32(message.Content);
+
+                // the decay (like half-life)
+                var weight = size * Math.Exp(-decayFactor * XDistance);
+
+                message = new Message(message.From, message.To, message.Key, (val, weight));
+
+            }
+            return message;
+        }
+
+        private void MovePoint1To2() => MovePoint1(new Point(X1, Y1), new Point(X2, Y2));
+
+        private void MovePoint2To1() => MovePoint2(new Point(X2, Y2), new Point(X1, Y1));
+
+        private void MovePoint1(Point one, Point two)
+        {
+            Point1 = one;
+            Point1 = two;
+
+        }
+
+        private void MovePoint2(Point one, Point two)
+        {
+            Point2 = one;
+            Point2 = two;
+
+        }
 
     }
+
+
     public class SelectCommand : ICommand
     {
         private ConnectionViewModel pvm;

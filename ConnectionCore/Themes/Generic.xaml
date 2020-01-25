@@ -3,33 +3,18 @@
                     xmlns:local="clr-namespace:ConnectionCore"
                     xmlns:common="clr-namespace:ConnectionCore.Common"
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl">
-
-
+                    xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
+                    xmlns:oxy="http://oxyplot.org/wpf">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ConnectionCore;component/Themes/PointControl.xaml"></ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
     
-    <Style  TargetType="{x:Type local:PathPolyLine}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:PathPolyLine}">
-                    <Polyline     Name="PolyLine"  
-                                  Stroke="Gray"
-                                  StrokeThickness="{Binding Thickness,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}"
-                                  Points="{Binding ConnectionPoints,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}"/>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
+    
+    <!-- Converter -->
     <local:PointToConnectionPointConverter x:Key="PointToConnectionPoint"></local:PointToConnectionPointConverter>
     <common:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter"></common:BooleanToThicknessConverter>
-
-
-
-
+    <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"></common:BooleanToVisibilityConverter>
     <!-- 
             Template for the button that is used to delete nodes and connections in the graph.
             This button is displayed in an adorner when the user hovers the mouse over a node or connection.
@@ -123,7 +108,68 @@
 
     </ControlTemplate>
 
-    <Style  TargetType="local:ConnectionsControl" BasedOn="{StaticResource {x:Type ItemsControl}}">
+
+    <DataTemplate DataType="{x:Type local:ConnectionNodeViewModel}">
+        <StackPanel>
+            <TextBlock Width="100" Height="30" Text="{Binding Mean}"></TextBlock>
+            <TextBlock Width="100" Height="30" Text="{Binding StandardDeviation}"></TextBlock>
+            <ToggleButton x:Name="Toggle1" Height="30" Width="100" >
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                        <Setter Property="Content" Value="Data"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Content" Value="Chart" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+            <Grid Visibility="{Binding ElementName=Toggle1, Path=IsChecked,  Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
+                <!--<DataGrid ItemsSource="{Binding Values}" />-->
+                <ListView Margin="10" ItemsSource="{Binding Values}" >
+
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="X" Width="50" DisplayMemberBinding="{Binding X}" />
+                            <GridViewColumn Header="Y" Width="50" DisplayMemberBinding="{Binding Y}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+            <Grid Visibility="{Binding ElementName=Toggle1, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" Width="160" Height="100">
+
+                <oxy:Plot >
+                    <oxy:Plot.Series>
+                        <oxy:ScatterSeries ItemsSource="{Binding Values}" DataFieldY="Y" DataFieldX="X">
+                            
+                        </oxy:ScatterSeries>
+                    </oxy:Plot.Series>
+                </oxy:Plot>
+            </Grid>
+
+        </StackPanel>
+     
+    </DataTemplate>
+    
+    
+    
+    <Style  TargetType="{x:Type local:PathPolyLine}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:PathPolyLine}">
+                    <Polyline     Name="PolyLine"  
+                                  Stroke="Gray"
+                                  StrokeThickness="{Binding Thickness,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}"
+                                  Points="{Binding ConnectionPoints,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    
+    
+    <Style  TargetType="{x:Type local:ConnectionsControl}" BasedOn="{StaticResource {x:Type ItemsControl}}">
      
         <Setter Property="ClipToBounds" Value="True"></Setter>
         <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
@@ -213,10 +259,10 @@
                                 </Canvas>--><!--
                             </ac:AdornedControl.AdornerContent>-->
                         <!--</ac:AdornedControl>-->
-                      
-                        <local:PointControl Point="{Binding Point, Mode=OneWay}" Delay="{Binding Delay,Mode=OneWay}">
-                            
-                        </local:PointControl>
+
+                        <local:PointControl Point="{Binding Point1, Mode=OneWay}" Delay="{Binding Delay,Mode=OneWay}"/>
+                        <local:PointControl Point="{Binding Point2, Mode=OneWay}" Delay="{Binding Delay,Mode=OneWay}"/>
+
                     </Canvas>
                 </DataTemplate>
             </Setter.Value>

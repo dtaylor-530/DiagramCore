@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <TabControl>
+        <TabItem Header="Connection">
+            <local:UserControl7></local:UserControl7>
+        </TabItem>
         <TabItem Header="Curve">
             <local:UserControl5></local:UserControl5>
         </TabItem>
@@ -22,7 +25,12 @@
         <TabItem Header="Circle">
             <local:UserControl1></local:UserControl1>
         </TabItem>
-  
+        <TabItem Header="A">
+            <local:UserControl6></local:UserControl6>
+        </TabItem>
+ 
+
+
 
     </TabControl>
 
