@@ -7,11 +7,13 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <TabControl>
-
+        <TabItem Header="Curve">
+            <local:UserControl5></local:UserControl5>
+        </TabItem>
         <TabItem Header="Nodes 2">
             <local:UserControl4></local:UserControl4>
         </TabItem>
-        <!--<TabItem Header="Nodes">
+        <TabItem Header="Nodes">
             <local:UserControl2></local:UserControl2>
         </TabItem>
         <TabItem Header="Graticule">
@@ -19,7 +21,9 @@
         </TabItem>
         <TabItem Header="Circle">
             <local:UserControl1></local:UserControl1>
-        </TabItem>-->
+        </TabItem>
+  
+
     </TabControl>
 
 

@@ -1,5 +1,4 @@
 ﻿using ConnectionCore;
-using GeometryCore;
 using NodeCore;
 using System;
 using System.Collections.Generic;
@@ -29,9 +28,9 @@ namespace DiagramCore.DemoApp
         {
 
             points = new ObservableCollection<NodeViewModel>(new[]{
-                new Node4ViewModel(50,  50,1) { CanChange=false},
-                new Node4ViewModel( 500,  50,2){   CanChange=false},
-                new Node4ViewModel (  240,  250,3) { CanChange = false },
+                new Node4ViewModel(50,  50,1) ,
+                new Node4ViewModel( 500,  50,2),
+                new Node4ViewModel (  240,  250,3),
             });
 
             _connections = new Lazy<ObservableCollection<ConnectionViewModel>>(() =>
@@ -123,41 +122,6 @@ namespace DiagramCore.DemoApp
 
             points.Add(node);
 
-        }
-    }
-
-
-    public class Node4ViewModel : NodeViewModel
-    {
-
-        public Node4ViewModel(int x, int y, object key) : base(x, y, key)
-        {
-            CanChange = false;
-
-        }
-        public override void NextMessage(IMessage message)
-        {
-            if (message.Key.ToString() == nameof(NodeViewModel.Y))
-            {
-                (int val, double weight) = ((int, double))message.Content;
-
-
-                //var node = Nodes.SingleOrDefault(a => a.Key.Equals(message.From));
-
-                //if (node != null)
-                //{
-                var content = (val * weight + this.Y * this.Size) / (weight + this.Size);
-                //message = new Message(message.From, message.To, message.Key, content);
-                //base.NextMessage(message);
-                this.Y = (int) content;
-                //}
-            }
-            
-            else
-            {
-                base.NextMessage(message);
-            }
-            
         }
     }
 }

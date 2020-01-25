@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConnectionCore", "Connectio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeometryCore", "GeometryCore\GeometryCore.csproj", "{CDC122BD-CC1C-4ED4-A5F9-1FDEC05DDACF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimationNode", "AnimationNode\AnimationNode.csproj", "{81821914-469D-492B-B5A4-C28D12EC432A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimationNode", "AnimationNode\AnimationNode.csproj", "{81821914-469D-492B-B5A4-C28D12EC432A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdornedControl", "AdornedControl\AdornedControl.csproj", "{674651E8-A77A-4783-8FDB-57BC5B39D380}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{81821914-469D-492B-B5A4-C28D12EC432A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81821914-469D-492B-B5A4-C28D12EC432A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81821914-469D-492B-B5A4-C28D12EC432A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{674651E8-A77A-4783-8FDB-57BC5B39D380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{674651E8-A77A-4783-8FDB-57BC5B39D380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{674651E8-A77A-4783-8FDB-57BC5B39D380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{674651E8-A77A-4783-8FDB-57BC5B39D380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

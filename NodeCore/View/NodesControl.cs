@@ -88,7 +88,7 @@ namespace NodeCore
 
             if (propertyName == nameof(NodeViewModel.IsSelected) && viewModel.IsSelected)
             {
-                Deselect(nodesControl, viewModel);
+                Reselect(nodesControl, viewModel);
             }
             if (propertyName == nameof(NodeViewModel.X) || propertyName == nameof(NodeViewModel.Y))
             {
@@ -107,6 +107,20 @@ namespace NodeCore
 
             }
         }
+        private static void Reselect(NodesControl nodesControl, NodeViewModel viewModel)
+        {
+            foreach (var item in nodesControl.Items)
+            {
+                if (viewModel != ((NodeViewModel)item))
+                {
+                    (item as NodeViewModel).IsSelected = false;
+                }
+            }
+
+            nodesControl.Dispatcher.InvokeAsync(() => nodesControl.SelectedObject = viewModel,
+                System.Windows.Threading.DispatcherPriority.Background, default);
+        }
+
 
         private void Merge(NodeViewModel match, NodeViewModel viewModel)
         {
@@ -130,19 +144,6 @@ namespace NodeCore
         }
 
 
-        private static void Deselect(NodesControl nodesControl, NodeViewModel viewModel)
-        {
-            foreach (var item in nodesControl.Items)
-            {
-                if (viewModel != ((NodeViewModel)item))
-                {
-                    (item as NodeViewModel).IsSelected = false;
-                }
-            }
-
-            nodesControl.Dispatcher.InvokeAsync(() => nodesControl.SelectedObject = viewModel,
-                System.Windows.Threading.DispatcherPriority.Background, default);
-        }
 
         private static Task<EventArgs> PositionChanged(NodesControl nodesControl, NodeViewModel viewModel, string propertyName, Action action = null)
         {
@@ -180,7 +181,7 @@ namespace NodeCore
             bool removed = false;
             while (Removals.TryPop(out NodeViewModel pop))
             {
-                removed |= (nodesControl.ItemsSource as ICollection<NodeViewModel>).Remove(pop);
+                removed |= (nodesControl.ItemsSource as ICollection<NodeViewModel>).ToList().Remove(pop);
             }
 
             if (removed)

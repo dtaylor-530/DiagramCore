@@ -46,7 +46,7 @@ namespace NodeCore
 
         public NodeViewModel(object key, int size) : base(new NodeViewModelValidator())
         {
-            Command = new SelectCommand(this);
+            SelectCommand = new SelectCommand(this);
             DragCommand = new DragCommand(this);
             ReSizeCommand = new ReSizeCommand(this);
             Size = size;
@@ -71,10 +71,7 @@ namespace NodeCore
             if (e.PropertyName != string.Empty)
             {
                 var property = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
-                //if (e.PropertyName == nameof(Y))
-                //{
-                //    property = (this.Y, this.Size);
-                //}
+
                 var message = new Message(this.Key, null, e.PropertyName, property);
                 Messages.Add(message);
             }
@@ -146,7 +143,7 @@ namespace NodeCore
 
 
         [Browsable(false)]
-        public ICommand Command { get; }
+        public ICommand SelectCommand { get; }
 
         [Browsable(false)]
         public ICommand DragCommand { get; }
@@ -219,8 +216,14 @@ namespace NodeCore
                     node = new NodeViewModel(message.From);
                     Nodes.Add(node);
                 }
+                if(message.Key.ToString()=="Y")
+                {
+                    (int val, double weight) = ((int, double))message.Content;
 
-                typeof(NodeViewModel).GetProperty(message.Key.ToString()).SetValue(node, message.Content);
+                   // this.Y =val;
+                }
+              //  else
+              //  typeof(NodeViewModel).GetProperty(message.Key.ToString()).SetValue(node, message.Content);
 
             }
         }

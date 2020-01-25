@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ConnectionCore
 {
@@ -21,6 +22,7 @@ namespace ConnectionCore
         private Point point;
         private bool biDirectional = true;
         private double decayFactor = 0.02d;
+        private bool isSelected;
 
         public ConnectionViewModel(INode node1, INode node2, bool birectional = true)
         {
@@ -42,6 +44,7 @@ namespace ConnectionCore
                     SendMessage2(message);
                 }
             node2.PropertyChanged += PropertyChanged2;
+            SelectCommand = new SelectCommand(this);
         }
 
 
@@ -56,16 +59,16 @@ namespace ConnectionCore
                     RaisePropertyChanged(nameof(this.X1));
                 if (e.PropertyName == nameof(node1.Y))
                     RaisePropertyChanged(nameof(this.Y1));
-       
-                
+
+
 
                 Point = new Point(X1, Y1);
                 Point = new Point(X2, Y2);
 
                 Task.Delay(Delay).ContinueWith(a =>
                 {
-                    var property = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
-                    IMessage message = new Message(node1.Key, node2.Key, e.PropertyName, property);
+                    var val = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
+                    IMessage message = new Message(node1.Key, node2.Key, e.PropertyName, val);
                     if (message.Key.Equals(nameof(node1.Y)))
                         message = Modify(message, node1.Size);
                     Messages.Add(message);
@@ -122,8 +125,8 @@ namespace ConnectionCore
 
                 Task.Delay(Delay).ContinueWith(a =>
                    {
-                       var property = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
-                       IMessage message = new Message(node2.Key, node1.Key, e.PropertyName, property);
+                       var val = sender.GetType().GetProperty(e.PropertyName).GetValue(sender);
+                       IMessage message = new Message(node2.Key, node1.Key, e.PropertyName, val);
                        if (message.Key.Equals(nameof(node2.Y)))
                            message = Modify(message, node2.Size);
                        Messages.Add(message);
@@ -215,5 +218,40 @@ namespace ConnectionCore
         }
         #endregion
 
+        public bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                if (value != isSelected) { isSelected = value; RaisePropertyChanged(); };
+            }
+        }
+
+
+        [Browsable(false)]
+        public ICommand SelectCommand { get; }
+
+
+
+    }
+    public class SelectCommand : ICommand
+    {
+        private ConnectionViewModel pvm;
+
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+        public SelectCommand(ConnectionViewModel pvm)
+        {
+            this.pvm = pvm;
+        }
+        public void Execute(object parameter)
+        {
+            if (pvm != null)
+                (pvm).IsSelected = true;
+        }
     }
 }

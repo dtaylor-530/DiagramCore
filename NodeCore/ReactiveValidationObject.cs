@@ -30,7 +30,7 @@ namespace ReactiveUI.FluentValidation
         #region Properties
         public bool HasErrors { get => _hasErrors; private set => this.RaiseIfPropertyChanged(ref _hasErrors, value); }
 
-
+        public string NotChanged { get; set; }
         public bool IsValid { get => _isValid; private set => this.RaiseIfPropertyChanged(ref _isValid, value); }
         #endregion
 
@@ -62,34 +62,22 @@ namespace ReactiveUI.FluentValidation
         }
         #endregion
 
-        protected virtual void RaiseAndValidateAndSetIfChanged<T>(ref T val, T value, ref T oldValue, [CallerMemberName] string name = null)
+
+        protected virtual bool RaiseAndValidateAndSetIfChanged<T>(ref T val, T value, [CallerMemberName] string name = null)
         {
             if (val.Equals(value) == false)
             {
-                oldValue = val;
                 val = value;
                 if (RaiseValidation(name))
                 {
 
-
                 }
                 RaisePropertyChanged(name);
+                return true;
             }
-        }
-
-        protected virtual void RaiseAndValidateAndSetIfChanged<T>(ref T val, T value, [CallerMemberName] string name = null)
-        {
-            if (val.Equals(value) == false)
-            {
-     
-                val = value;
-                if (RaiseValidation(name))
-                {
-
-
-                }
-                RaisePropertyChanged(name);
-            }
+            NotChanged = name;
+            RaisePropertyChanged(nameof(NotChanged));
+            return false;
         }
 
         public bool SuppressChange { get; set; }

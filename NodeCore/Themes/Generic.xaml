@@ -82,7 +82,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <Grid x:Name="Grid1">
-                        <Button Command="{Binding Command}"   Height="{Binding Size}"    Width="{Binding Size}" >
+                        <Button Command="{Binding SelectCommand}"   Height="{Binding Size}"    Width="{Binding Size}" >
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="{Binding Size}"/>
@@ -216,7 +216,7 @@
                             <Grid>
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDown">
-                                        <i:InvokeCommandAction Command="{Binding Command}" />
+                                        <i:InvokeCommandAction Command="{Binding SelectCommand}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
 

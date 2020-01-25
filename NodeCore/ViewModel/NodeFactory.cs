@@ -30,5 +30,17 @@ namespace NodeCore
             }
         }
 
+        public static IEnumerable<(double x, double y)> SelectSineCoordinates(int x0, int y0, int radius, int number)
+        {
+            double division = 360.0 / number;
+
+            for (int i = 0; i < number; i++)
+            {
+                double a = division * (i + 1);
+                double x = a;
+                double y = y0 + radius * Math.Sin(Math.PI * a / 180.0);
+                yield return (x, y);
+            }
+        }
     }
 }

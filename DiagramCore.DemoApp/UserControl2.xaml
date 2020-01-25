@@ -19,6 +19,9 @@
         <DockPanel.DataContext>
             <local:DesignData/>
         </DockPanel.DataContext>
+        <ScrollViewer>
+            
+    
         <StackPanel DockPanel.Dock="Left">
             <numeric:DoubleBox  
                             x:Name="DoubleBoxX"
@@ -41,6 +44,9 @@
 
             <windows:PropertyGrid  Margin="10" xmlns:windows="clr-namespace:SoftFluent.Windows;assembly=SoftFluent.Windows" 
                             SelectedObject="{Binding ElementName=NodesControl ,Path=SelectedObject}" Width="225" />
+
+            <windows:PropertyGrid  Margin="10" xmlns:windows="clr-namespace:SoftFluent.Windows;assembly=SoftFluent.Windows" 
+                            SelectedObject="{Binding ElementName=ConnectionsControl ,Path=SelectedObject}" Width="225" />
 
 
 
@@ -116,7 +122,8 @@
 
                 </ListView.View>
             </ListView>
-        </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
 
         <!--<paz:ZoomBorder Name="zoomBorder" Stretch="None" ZoomSpeed="1.2" 
                         Background="GhostWhite" ClipToBounds="True" Focusable="True"
