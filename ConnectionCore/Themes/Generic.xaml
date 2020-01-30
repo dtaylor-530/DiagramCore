@@ -161,7 +161,31 @@
                     <Polyline     Name="PolyLine"  
                                   Stroke="Gray"
                                   StrokeThickness="{Binding Thickness,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}"
-                                  Points="{Binding ConnectionPoints,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}"/>
+                                  Points="{Binding ConnectionPoints,Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}">
+                        <Polyline.Style>
+                            <Style TargetType="Polyline">
+                                <Style.Triggers>
+                                    <!--<DataTrigger Binding="{Binding End}" Value="{x:Null}">
+                                    <Setter TargetName="Line" Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>-->
+                                    <DataTrigger Binding="{Binding Path=DataContext.IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                        <Setter Property="Stroke" Value="Red"/>
+                                        <Setter Property="StrokeDashArray" Value="2 3"/>
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard x:Name="DashAnimation">
+                                                <Storyboard Duration="00:00:01" RepeatBehavior="Forever">
+                                                    <DoubleAnimation From="0" To="50"  Storyboard.TargetProperty="StrokeDashOffset"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <StopStoryboard BeginStoryboardName="DashAnimation"/>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Polyline.Style>
+                    </Polyline>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -186,7 +210,7 @@
 
         <Setter Property="ItemTemplate">
             <Setter.Value>
-                <DataTemplate >
+                <DataTemplate DataType="{x:Type local:ConnectionViewModel}">
                     <Canvas>
                
                         
