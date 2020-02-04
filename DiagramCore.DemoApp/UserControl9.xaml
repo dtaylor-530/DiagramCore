@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DiagramCore.DemoApp.UserControl7"
+﻿<UserControl x:Class="DiagramCore.DemoApp.UserControl9"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -17,18 +17,19 @@
         <ScrollViewer DockPanel.Dock="Left" Width="400">
             <StackPanel>
                 <ContentPresenter Content="{Binding ElementName=ConnectionsControl, Path=SelectedObject.Node}"></ContentPresenter>
+                <ContentPresenter Content="{Binding ElementName=NodesControl, Path=SelectedObject}"></ContentPresenter>
             </StackPanel>
         </ScrollViewer>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <Grid Grid.Column="2">
             <Grid.DataContext>
-                <local:ConnectionData/>
+                <local:TeamData/>
             </Grid.DataContext>
 
             <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}"/>
 
 
-            <pwpf:NodesControl  x:Name="NodesControl" ItemsSource="{Binding Points}" />
+            <pwpf:NodesControl  x:Name="NodesControl" IsMoveable="False" ItemsSource="{Binding Points}" />
 
         </Grid>
     </Grid>

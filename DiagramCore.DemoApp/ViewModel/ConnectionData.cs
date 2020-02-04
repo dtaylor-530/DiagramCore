@@ -52,9 +52,7 @@ namespace DiagramCore.DemoApp
                       bNodeViewModel.Y = (int)(values.Current.y * 10);
                   });
             }
-
         }
-
 
         public Collection<INode> Points => points;
 
@@ -68,7 +66,7 @@ namespace DiagramCore.DemoApp
             while (true)
             {
                 double val = random.Next(0, 20);
-                yield return (val, MathNet.Numerics.Distributions.Normal.Sample(random, factor * val, 0.3));
+                yield return (val, MathNet.Numerics.Distributions.Normal.Sample(random, factor * val, 3));
             }
         }
 

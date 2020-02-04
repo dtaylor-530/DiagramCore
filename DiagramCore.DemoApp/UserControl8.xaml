@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="DiagramCore.DemoApp.UserControl8"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DiagramCore.DemoApp"
+             xmlns:pfl="clr-namespace:ConnectionCore;assembly=ConnectionCore"
+             xmlns:node="clr-namespace:NodeCore.View;assembly=NodeCore"
+             xmlns:local1="clr-namespace:DiagramCore.DemoApp.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <local1:Design2Data ></local1:Design2Data>
+    </UserControl.DataContext>
+
+    <Grid x:Name="GridMain">
+
+
+        <node:GroupedNodesControl ItemsSource="{Binding Points}" ReferenceElement="{Binding ElementName=GridMain}"></node:GroupedNodesControl>
+        
+        <pfl:ConnectionsControl  x:Name="ConnectionsControl" ItemsSource="{Binding Connections}" />
+        
+    </Grid>
+</UserControl>

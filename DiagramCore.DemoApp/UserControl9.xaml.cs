@@ -17,12 +17,12 @@ namespace DiagramCore.DemoApp
     /// <summary>
     /// Interaction logic for UserControl.xaml
     /// </summary>
-    public partial class UserControl7 : UserControl
+    public partial class UserControl9 : UserControl
     {
-        public UserControl7()
+        public UserControl9()
         {
             InitializeComponent();
-            this.ConnectionsControl.SelectedObject = ConnectionsControl.ItemsSource.Cast<object>().First();
+            
         }
     }
 }

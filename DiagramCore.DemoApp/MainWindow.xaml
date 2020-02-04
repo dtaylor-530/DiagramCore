@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DiagramCore.DemoApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="850" Width="1000">
     <TabControl>
+        <TabItem Header="Team">
+            <local:UserControl9></local:UserControl9>
+        </TabItem>
+        <!--<TabItem Header="A">
+            <local:UserControl8></local:UserControl8>
+        </TabItem>
         <TabItem Header="Connection">
             <local:UserControl7></local:UserControl7>
         </TabItem>
@@ -27,7 +33,7 @@
         </TabItem>
         <TabItem Header="A">
             <local:UserControl6></local:UserControl6>
-        </TabItem>
+        </TabItem>-->
  
 
 

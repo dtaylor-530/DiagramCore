@@ -19,10 +19,14 @@
   <ItemGroup>
     <ProjectReference Include="..\ConnectionCore\ConnectionCore.csproj" />
     <ProjectReference Include="..\DiagramCore\DiagramCore.csproj" />
+    <ProjectReference Include="..\GroupedObservableCollection\ObservableCollections.csproj" />
     <ProjectReference Include="..\NodeCore\NodeCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="UserControl9.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControl7.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -32,6 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="UserControl9.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControl7.xaml">
       <SubType>Designer</SubType>
     </Page>
