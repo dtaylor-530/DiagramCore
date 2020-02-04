@@ -18,16 +18,19 @@ namespace ConnectionCore
     public class ConnectionViewModel : INotifyPropertyChanged
     {
         private const double DivideFactor = 2d;
-        private int delay = 2000;
         private static readonly string[] props = new[] { nameof(INode.X), nameof(INode.Y), nameof(INode.Size) };
-        private INode node1;
-        private INode node2;
+
+        private int delay = 2000;
         private Point point1;
         private Point point2;
         private bool biDirectional = true;
-        private double decayFactor = 0.02d;
         private bool isSelected;
-        ConnectionNodeViewModel node = new ConnectionNodeViewModel();
+        private ConnectionNodeViewModel node = new ConnectionNodeViewModel();
+
+        protected double decayFactor = 0.02d;
+        protected double XDistance => Math.Abs(X1 - X2);
+        protected INode node1;
+        protected INode node2;
 
         public ConnectionViewModel(INode node1, INode node2, bool birectional = true)
         {
@@ -160,7 +163,7 @@ namespace ConnectionCore
 
         public ConnectionNodeViewModel Node => node;
 
-        private double XDistance => Math.Abs(X1 - X2);
+   
 
         #region propertychanged
 
@@ -188,7 +191,7 @@ namespace ConnectionCore
         public ICommand SelectCommand { get; }
 
 
-        private IMessage Modify(IMessage message, int size)
+        protected virtual IMessage Modify(IMessage message, int size)
         {
             if (message.Key.Equals(nameof(node1.Y)))
             {
