@@ -110,10 +110,30 @@
 
 
     <DataTemplate DataType="{x:Type local:ConnectionNodeViewModel}">
-        <StackPanel>
-            <TextBlock Width="100" Height="30" Text="{Binding Mean}"></TextBlock>
-            <TextBlock Width="100" Height="30" Text="{Binding StandardDeviation}"></TextBlock>
-            <ToggleButton x:Name="Toggle1" Height="30" Width="100" >
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+ 
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+
+            </Grid.RowDefinitions>
+
+            <StackPanel  Grid.Row="0">
+                <Grid>
+                    <Label>Mean</Label>
+                    <TextBlock Width="100" FontSize="20" Height="30" Text="{Binding Mean, StringFormat=N}"></TextBlock>
+                </Grid>
+                <Grid>
+        <Label>Standard Deviation</Label>
+
+                <TextBlock Width="100" FontSize="20" Height="30" Text="{Binding StandardDeviation, StringFormat=N}"></TextBlock>
+        </Grid>
+        </StackPanel>
+     
+            <ToggleButton x:Name="Toggle1" Grid.Row="1"  Height="30" Width="100" >
                 <ToggleButton.Style>
                     <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
                         <Setter Property="Content" Value="Data"/>
@@ -125,7 +145,7 @@
                     </Style>
                 </ToggleButton.Style>
             </ToggleButton>
-            <Grid Visibility="{Binding ElementName=Toggle1, Path=IsChecked,  Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
+            <Grid  Grid.Row="2" Height="400" Visibility="{Binding ElementName=Toggle1, Path=IsChecked,  Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
                 <!--<DataGrid ItemsSource="{Binding Values}" />-->
                 <ListView Margin="10" ItemsSource="{Binding Values}" >
 
@@ -137,19 +157,21 @@
                     </ListView.View>
                 </ListView>
             </Grid>
-            <Grid Visibility="{Binding ElementName=Toggle1, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" Width="160" Height="100">
+            <Grid Grid.Row="5"  Visibility="{Binding ElementName=Toggle1, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" Height="400"
+                 >
 
-                <oxy:Plot >
+                <oxy:Plot>
                     <oxy:Plot.Series>
                         <oxy:ScatterSeries ItemsSource="{Binding Values}" DataFieldY="Y" DataFieldX="X">
-                            
+
                         </oxy:ScatterSeries>
                     </oxy:Plot.Series>
                 </oxy:Plot>
             </Grid>
 
-        </StackPanel>
-     
+
+
+        </Grid>
     </DataTemplate>
     
     
