@@ -3,54 +3,73 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using OnTheFlyStats;
 
 namespace ConnectionCore
 {
 
-  
-    public class ConnectionNodeViewModel:INotifyPropertyChanged
+
+    public class ConnectionNodeViewModel : INotifyPropertyChanged
     {
         private Stats stats = new OnTheFlyStats.Stats();
         public ObservableCollection<dynamic> Values { get; } = new ObservableCollection<dynamic>();
+        private Subject<double> oneStream = new Subject<double>();
+        private Subject<double> twoStream = new Subject<double>();
+
 
         public double Mean => stats.Average;
 
         public double StandardDeviation => stats.PopulationStandardDeviation;
 
-        DoubleItem doubleItem = new DoubleItem();
+        //DoubleItem doubleItem = new DoubleItem();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ConnectionNodeViewModel()
         {
-            doubleItem.Stopped += DoubleItem_Stopped;
+            //doubleItem.Stopped += DoubleItem_Stopped;
+            oneStream.Zip(twoStream, (a, b) => (a, b))
+                .Subscribe(c =>
+                 {
+                     Values.Add(new { X = c.a, Y = c.b });
+                     if (c.b != 0)
+                     {
+                         stats.Update(c.a / c.b);
 
+                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Mean)));
+                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StandardDeviation)));
+                     }
+                 });
         }
 
-        private void DoubleItem_Stopped()
-        {
-            stats.Update(doubleItem.One / doubleItem.Two);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Mean)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StandardDeviation)));
+        public bool IsNegative { get; set; }
 
-            Values.Add(new { X= doubleItem.One, Y=doubleItem.Two });
-       
-            doubleItem.Stopped -= DoubleItem_Stopped;
-            doubleItem = new DoubleItem();
-            doubleItem.Stopped += DoubleItem_Stopped;
-        }
+
+        //private void DoubleItem_Stopped()
+        //{
+        //    stats.Update(doubleItem.One / doubleItem.Two);
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Mean)));
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StandardDeviation)));
+
+        //    Values.Add(new { X= doubleItem.One, Y=doubleItem.Two });
+
+        //    doubleItem.Stopped -= DoubleItem_Stopped;
+        //    doubleItem = new DoubleItem();
+        //    doubleItem.Stopped += DoubleItem_Stopped;
+        //}
 
         public void OnNext1(double one)
         {
-            doubleItem.OnNext1(one);
+            oneStream.OnNext(one);
         }
 
 
         public void OnNext2(double two)
         {
-            doubleItem.OnNext2(two);
+            twoStream.OnNext(two);
         }
 
     }
