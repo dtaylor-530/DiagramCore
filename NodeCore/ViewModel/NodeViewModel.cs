@@ -130,6 +130,7 @@ namespace NodeCore
 
         public object Object { get; set; } = "Node";
 
+        public object GroupKey { get; set; }
 
         [Browsable(false)]
         public int OldX { get; private set; }

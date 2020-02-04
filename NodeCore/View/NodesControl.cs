@@ -25,6 +25,10 @@ namespace NodeCore
         public NodesControl()
         {
             AddXCommand = new AddXCommand(this);
+            if(this.IsMoveable==false)
+            {
+                SetPositionOnce();
+            }
         }
 
         public bool IsDraggable
@@ -46,8 +50,32 @@ namespace NodeCore
 
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register("SelectedObject", typeof(object), typeof(NodesControl), new PropertyMetadata(null));
 
+        public bool IsMoveable
+        {
+            get { return (bool)GetValue(IsMoveableProperty); }
+            set { SetValue(IsMoveableProperty, value); }
+        }
 
 
+        public static readonly DependencyProperty IsMoveableProperty = DependencyProperty.Register("IsMoveable", typeof(bool), typeof(NodesControl), new PropertyMetadata(true,Changed));
+
+        private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue == false)
+            {
+                (d as NodesControl).SetPositionOnce();
+            }
+        }
+
+
+        private void SetPositionOnce()
+        {
+            var myResourceDictionary = new ResourceDictionary();
+            myResourceDictionary.Source =
+                new Uri("/NodeCore;component/Themes/NodesControl.xaml",
+                        UriKind.RelativeOrAbsolute);
+            this.ItemContainerStyle = myResourceDictionary["OneTime"] as Style;
+        }
 
         public ICommand AddXCommand
         {
@@ -199,6 +227,7 @@ namespace NodeCore
 
 
     }
+
 
     internal class AddXCommand : ICommand
     {
